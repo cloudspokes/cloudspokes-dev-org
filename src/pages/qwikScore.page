@@ -1,0 +1,105 @@
+<apex:page controller="qwikScore" action="{!getQuestionList}" id="page">
+
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+    <style type="text/css">
+        .Numeric { margin: 10px; margin-top: 18px; }
+
+        .loader
+        {
+            background-image:url('http://blogs.nvidia.com/wp-content/themes/nvidia/images/ajax-bar.gif');
+            background-position:right top;
+            width:280px;
+            height:23px;
+            margin-left:15px;
+            font-size:14px;
+            padding:0px;
+            float:left;
+            background-repeat:no-repeat;
+            
+        }        
+    </style>
+  
+<script type="text/javascript">
+var jQuery = jQuery.noConflict();
+var surveyQuestionData = new Object();
+var testVar1 = 1;
+var testVar2 = 5;
+jQuery(document).ready(function() {
+    jQuery( ".input-Numeric").hide();
+});
+
+
+function registerQuestionValues(answerId, minVal, maxVal, currentVal)
+{
+
+        jQuery( "#answer"+answerId ).slider({
+            range: "min",
+            value: currentVal,
+            min: minVal,
+            max: maxVal,
+            slide: function( event, ui ) 
+            {
+                console.log('.'+this.id+'input');
+                jQuery('.'+this.id+'input').val(ui.value);
+                jQuery('#'+this.id+'amount').text('Current Score: ' +ui.value);
+               
+                jQuery('#'+this.id+'input').val(ui.value);
+            }
+        });
+    
+    jQuery('#answer'+answerId+'amount').text('Current Score: ' + currentVal);
+}
+</script>
+<apex:pageBlock id="fieldBlock">
+    <apex:form id="form" >
+        <apex:pageMessage severity="warning" rendered="{! surveyGraded || NOT(surveyActive)}">
+            You have either already taken this survey or it is no longer active. Changes may not be saved.
+        </apex:pageMessage>
+        
+        <apex:actionFunction action="{!saveRecords}" name="saveRecords" />   
+        <apex:actionFunction action="{!finishAndSave}" name="gradeCard" />           
+
+     
+                
+        <apex:pageBlockTable value="{!answerTemplates}" var="answer"  id="fieldTable" style="width:100%;">
+            
+           <apex:column value="{!answer.Question__r.Question_Text__c}" headerValue="Question" width="200"/>
+        
+           <apex:column headerValue="Input" width="200">
+                <div class="scoreDiv" width="100%; text-align:center;">     
+                    <div id="answer{!answer.id}amount" style="margin-left:auto; margin-right:auto; text-align:center;"></div>     
+                </div>
+                <div id="answer{!answer.id}" class="{!answer.Question__r.Question_Type__c}" style="width:280px;">
+                    <apex:inputField value="{!answer.Answer_Text__c}" id="valueField" styleClass="answer{!answer.id}input input-{!answer.Question__r.Question_Type__c}" />                                         
+                </div>
+                <script>
+                    if('{!answer.Question__r.Question_Type__c}' == 'Numeric')
+                    {
+                        registerQuestionValues('{!answer.id}',{!answer.Question__r.Minimum_Value__c}, {!answer.Question__r.Maximum_Value__c}, '{!answer.Answer_Text__c}');
+                    }
+                </script>
+           </apex:column>
+                               
+           <apex:column value="{!answer.Question__r.QwikScore_Question_Group__r.name}" headerValue="Group"/>
+            
+           
+            
+           <apex:column value="{!answer.Question__r.Question_Weight__c}" headerValue="Weight"/>
+        
+        </apex:pageBlockTable>
+        
+        <apex:outputPanel rendered="{!NOT(surveyGraded) && surveyActive}">
+            <input type="button" onClick="saveRecords()" class="btn" value="Save" />
+            <input type="button" onClick="gradeCard()" class="btn" value="Finish and Grade" />
+            <input type="button" onClick="location.href='/{!participantId}'" class="btn" value="Back to Submission" />
+        </apex:outputPanel>
+        
+        <apex:actionStatus startStyleClass="loader" startText="Working" id="working" />
+
+        
+    </apex:form>
+</apex:pageBlock>
+</apex:page>

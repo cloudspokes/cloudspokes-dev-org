@@ -1,0 +1,15 @@
+<apex:page controller="qwikScore" action="{!getResultLink}" >
+    <apex:pageBlock >
+      <apex:pageBlockSection >
+          <apex:sectionHeader title="Survey Complete" />
+      </apex:pageBlockSection>
+      <apex:pageBlockSection >
+          
+          <apex:outputText escape="false">
+          Your survey has been completed.<br/><a href='{!linkURL}'>Click here to see the results</a>
+          </apex:outputText>
+      </apex:pageBlockSection>
+  </apex:pageBlock>
+  
+ 
+</apex:page>

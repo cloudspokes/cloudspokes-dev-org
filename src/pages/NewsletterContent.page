@@ -1,0 +1,23 @@
+<apex:page standardController="Newsletter__c" extensions="NewsletterContentController">
+ <apex:sectionHeader title="{!n.name}" subtitle="Newsletter Content" description="Generate HTML content for the MailChimp newsletter"/>
+
+ <apex:form >
+	 <apex:pageBlock >
+	
+	 <apex:pageBlockButtons >
+	   <apex:commandButton action="{!cancel}" value="Back"/>
+	 </apex:pageBlockButtons>
+	 <apex:pageMessages />
+	
+	 <apex:pageBlockSection title="HTML Content" columns="1" id="block1">
+	
+	 <apex:pageBlockSectionItem >
+	   <apex:inputTextarea id="content" value="{!content}" cols="150" rows="15"/>
+	 </apex:pageBlockSectionItem>
+	
+	 </apex:pageBlockSection>
+	 
+	 </apex:pageBlock>
+ </apex:form>
+
+</apex:page>
